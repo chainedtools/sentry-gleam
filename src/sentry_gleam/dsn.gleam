@@ -123,7 +123,10 @@ fn parse_path(rest: String) -> Result(#(String, String), DsnError) {
   }
 }
 
-fn split_once(input: String, on: String) -> Result(#(String, String), DsnError) {
+fn split_once(
+  input: String,
+  on: String,
+) -> Result(#(String, String), DsnError) {
   case string.split_once(input, on) {
     Ok(pair) -> Ok(pair)
     Error(_) -> Error(BadDsn)

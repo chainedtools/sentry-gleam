@@ -7,7 +7,7 @@ import gleam/option.{None, Some}
 import sentry_gleam/config.{type Config}
 import sentry_gleam/dsn
 import sentry_gleam/envelope
-import sentry_gleam/event.{ExceptionEntry, Event}
+import sentry_gleam/event.{Event, ExceptionEntry}
 import sentry_gleam/transport
 
 pub type Client {
@@ -42,7 +42,12 @@ pub fn capture_exception(
   kind: String,
   value: String,
 ) -> Result(String, CaptureError) {
-  capture(client, None, Some(ExceptionEntry(kind: kind, value: value)), event.Error)
+  capture(
+    client,
+    None,
+    Some(ExceptionEntry(kind: kind, value: value)),
+    event.Error,
+  )
 }
 
 fn capture(
@@ -51,17 +56,23 @@ fn capture(
   exception: option.Option(event.ExceptionEntry),
   level: event.Level,
 ) -> Result(String, CaptureError) {
-  let e = Event(
-    event_id: new_event_id(),
-    level: level,
-    message: message,
-    exception: exception,
-    environment: client.config.environment,
-    release: client.config.release,
-  )
+  let e =
+    Event(
+      event_id: new_event_id(),
+      level: level,
+      message: message,
+      exception: exception,
+      environment: client.config.environment,
+      release: client.config.release,
+    )
   let body = envelope.build(e, dsn.to_string(client.parsed))
   case
-    transport.send(client.parsed, transport.Envelope, dsn.auth_header(client.parsed), body)
+    transport.send(
+      client.parsed,
+      transport.Envelope,
+      dsn.auth_header(client.parsed),
+      body,
+    )
   {
     Ok(_) -> Ok(e.event_id)
     Error(error) -> Error(SendFailed(error))
@@ -83,13 +94,14 @@ pub fn serialize_event(
   message: String,
   level: event.Level,
 ) -> String {
-  let e = Event(
-    event_id: "0123456789abcdef0123456789abcdef",
-    level: level,
-    message: Some(message),
-    exception: None,
-    environment: client.config.environment,
-    release: client.config.release,
-  )
+  let e =
+    Event(
+      event_id: "0123456789abcdef0123456789abcdef",
+      level: level,
+      message: Some(message),
+      exception: None,
+      environment: client.config.environment,
+      release: client.config.release,
+    )
   json.to_string(e |> event.event_to_json)
 }

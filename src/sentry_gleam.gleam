@@ -6,7 +6,9 @@ import sentry_gleam/config
 import sentry_gleam/event
 
 /// Validate the DSN and create a client.
-pub fn new(config: config.Config) -> Result(client.Client, client.CaptureError) {
+pub fn new(
+  config: config.Config,
+) -> Result(client.Client, client.CaptureError) {
   client.new(config)
 }
 

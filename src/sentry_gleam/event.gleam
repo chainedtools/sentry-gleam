@@ -42,7 +42,9 @@ pub type Event {
 pub fn event_to_json(event: Event) -> Json {
   let message_json = case event.message {
     Some(message) ->
-      json.object([#("message", json.object([#("formatted", json.string(message))]))])
+      json.object([
+        #("message", json.object([#("formatted", json.string(message))])),
+      ])
     None -> json.null()
   }
   let exception_json = case event.exception {
@@ -52,7 +54,10 @@ pub fn event_to_json(event: Event) -> Json {
           "values",
           json.array(
             [
-              json.object([#("type", json.string(kind)), #("value", json.string(value))]),
+              json.object([
+                #("type", json.string(kind)),
+                #("value", json.string(value)),
+              ]),
             ],
             fn(item) { item },
           ),

@@ -29,10 +29,6 @@ pub fn main() {
   io.println("sent message event: " <> event_id)
 
   let assert Ok(event_id) =
-    sentry_gleam.capture_exception(
-      client,
-      "ErlangError",
-      "badarg",
-    )
+    sentry_gleam.capture_exception(client, "ErlangError", "badarg")
   io.println("sent exception event: " <> event_id)
 }

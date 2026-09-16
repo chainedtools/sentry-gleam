@@ -78,8 +78,7 @@ pub fn dsn_error_cases_test() {
 }
 
 pub fn store_url_test() {
-  let assert Ok(parsed) =
-    dsn.parse("https://key@sentry.example.com/sub/123")
+  let assert Ok(parsed) = dsn.parse("https://key@sentry.example.com/sub/123")
   dsn.store_url(parsed)
   |> should.equal("https://sentry.example.com/sub/api/123/store/")
 }
@@ -125,9 +124,10 @@ pub fn event_serialization_test() {
   let body = json.to_string(event.event_to_json(e))
   should.be_true(string.contains(body, "\"platform\":\"gleam\""))
   should.be_true(string.contains(body, "\"level\":\"info\""))
-  should.be_true(
-    string.contains(body, "\"message\":{\"formatted\":\"hello from gleam\"}"),
-  )
+  should.be_true(string.contains(
+    body,
+    "\"message\":{\"formatted\":\"hello from gleam\"}",
+  ))
   should.be_true(string.contains(body, "\"environment\":\"production\""))
 }
 
@@ -142,12 +142,10 @@ pub fn exception_serialization_test() {
       release: "",
     )
   let body = json.to_string(e |> event.event_to_json)
-  should.be_true(
-    string.contains(
-      body,
-      "\"values\":[{\"type\":\"ErlangError\",\"value\":\"badarg\"}]",
-    ),
-  )
+  should.be_true(string.contains(
+    body,
+    "\"values\":[{\"type\":\"ErlangError\",\"value\":\"badarg\"}]",
+  ))
 }
 
 fn test_client() {
@@ -160,11 +158,7 @@ fn test_client() {
 
 pub fn client_new_validates_dsn_test() {
   let assert Ok(_) = test_client()
-  client.new(Config(
-    dsn: "not a dsn",
-    environment: "test",
-    release: "0.0.1",
-  ))
+  client.new(Config(dsn: "not a dsn", environment: "test", release: "0.0.1"))
   |> should.equal(Error(client.InvalidDsn))
 }
 
@@ -195,9 +189,7 @@ pub fn envelope_framing_test() {
   let assert [header, item, payload, ""] = string.split(body, "\n")
   should.be_true(string.contains(header, "\"event_id\""))
   should.be_true(string.contains(item, "\"type\":\"event\""))
-  should.be_true(
-    string.contains(item, "\"content_type\":\"application/json\""),
-  )
+  should.be_true(string.contains(item, "\"content_type\":\"application/json\""))
   let payload_size =
     bit_array.byte_size(bit_array.from_string(payload))
     |> int.to_string
@@ -210,5 +202,8 @@ pub fn client_event_serialization_test() {
   let assert Ok(c) = test_client()
   let body = client.serialize_event(c, "captured", Warning)
   should.be_true(string.contains(body, "\"level\":\"warning\""))
-  should.be_true(string.contains(body, "\"message\":{\"formatted\":\"captured\"}"))
+  should.be_true(string.contains(
+    body,
+    "\"message\":{\"formatted\":\"captured\"}",
+  ))
 }
