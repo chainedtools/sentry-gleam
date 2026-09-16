@@ -3,8 +3,8 @@
 //// typed `SendError`.
 
 import gleam/http
-import gleam/httpc
 import gleam/http/request
+import gleam/httpc
 import sentry_gleam/dsn
 
 pub type SendError {
